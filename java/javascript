@@ -1,0 +1,229 @@
+const MIN = -10;
+const MAX = 10;
+
+let score = 0;
+let combo = 0;
+let bestCombo = 0;
+
+let currentAnswer = null;
+
+function gcd(a, b) {
+    a = Math.abs(a);
+    b = Math.abs(b);
+
+    while (b !== 0) {
+        [a, b] = [b, a % b];
+    }
+
+    return a;
+}
+
+function simplify(num, den) {
+    if (den < 0) {
+        num *= -1;
+        den *= -1;
+    }
+
+    const g = gcd(num, den);
+
+    return {
+        num: num / g,
+        den: den / g
+    };
+}
+
+function randInt(min, max) {
+    return Math.floor(
+        Math.random() * (max - min + 1)
+    ) + min;
+}
+
+function randNonZero() {
+    let n = 0;
+
+    while (n === 0) {
+        n = randInt(MIN, MAX);
+    }
+
+    return n;
+}
+
+function makeFraction() {
+    return simplify(
+        randInt(MIN, MAX),
+        randNonZero()
+    );
+}
+
+function fractionToString(f) {
+    if (f.den === 1) {
+        return `${f.num}`;
+    }
+
+    return `${f.num}/${f.den}`;
+}
+
+function multiplyFractions(a, b) {
+    return simplify(
+        a.num * b.num,
+        a.den * b.den
+    );
+}
+
+function divideFractions(a, b) {
+    return simplify(
+        a.num * b.den,
+        a.den * b.num
+    );
+}
+
+function generateProblem() {
+    const mode =
+        document.getElementById("mode").value;
+
+    let q;
+    let ans;
+
+    if (mode === "かけ算") {
+        const a = randInt(MIN, MAX);
+        const b = randInt(MIN, MAX);
+
+        q = `${a} × ${b}`;
+        ans = simplify(a * b, 1);
+    }
+
+    else if (mode === "わり算") {
+        const b = randNonZero();
+        const result = randInt(MIN, MAX);
+        const a = result * b;
+
+        q = `${a} ÷ ${b}`;
+        ans = simplify(result, 1);
+    }
+
+    else if (mode === "分数かけ算") {
+        const a = makeFraction();
+        const b = makeFraction();
+
+        q = `(${fractionToString(a)}) × (${fractionToString(b)})`;
+
+        ans = multiplyFractions(a, b);
+    }
+
+    else if (mode === "分数わり算") {
+        const a = makeFraction();
+
+        let b;
+
+        do {
+            b = makeFraction();
+        }
+        while (b.num === 0);
+
+        q = `(${fractionToString(a)}) ÷ (${fractionToString(b)})`;
+
+        ans = divideFractions(a, b);
+    }
+
+    currentAnswer = ans;
+
+    document.getElementById("question").innerHTML =
+        `<h3>${q} = ?</h3>`;
+
+    document.getElementById("answer").value = "";
+    document.getElementById("message").textContent = "";
+}
+
+function parseFraction(text) {
+    text = text.trim();
+
+    if (text === "") {
+        return null;
+    }
+
+    if (text.includes("/")) {
+        const parts = text.split("/");
+
+        if (parts.length !== 2) {
+            return null;
+        }
+
+        const n = parseInt(parts[0]);
+        const d = parseInt(parts[1]);
+
+        if (isNaN(n) || isNaN(d) || d === 0) {
+            return null;
+        }
+
+        return simplify(n, d);
+    }
+
+    const n = parseInt(text);
+
+    if (isNaN(n)) {
+        return null;
+    }
+
+    return simplify(n, 1);
+}
+
+function checkAnswer() {
+    const userAns = parseFraction(
+        document.getElementById("answer").value
+    );
+
+    const msg =
+        document.getElementById("message");
+
+    if (userAns === null) {
+        msg.className = "error";
+        msg.textContent =
+            "入力が正しくないよ（例：3/4）";
+        return;
+    }
+
+    if (
+        userAns.num === currentAnswer.num &&
+        userAns.den === currentAnswer.den
+    ) {
+        msg.className = "success";
+        msg.textContent = "正解！🎉";
+
+        score++;
+        combo++;
+
+        if (combo > bestCombo) {
+            bestCombo = combo;
+        }
+    }
+    else {
+        msg.className = "error";
+        msg.textContent =
+            `不正解！正解は ${fractionToString(currentAnswer)}`;
+
+        combo = 0;
+    }
+
+    updateScore();
+}
+
+function updateScore() {
+    document.getElementById("score").textContent =
+        score;
+
+    document.getElementById("combo").textContent =
+        combo;
+
+    document.getElementById("bestCombo").textContent =
+        bestCombo;
+}
+
+function nextProblem() {
+    generateProblem();
+}
+
+document
+    .getElementById("mode")
+    .addEventListener("change", generateProblem);
+
+generateProblem();

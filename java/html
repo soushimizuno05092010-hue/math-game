@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>分数バトルゲーム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🎮 分数バトルゲーム（約分対応）</h1>
+
+<label>モードを選んでね：</label>
+<select id="mode">
+    <option>かけ算</option>
+    <option>わり算</option>
+    <option>分数かけ算</option>
+    <option>分数わり算</option>
+</select>
+
+<h2>🧠 問題</h2>
+<div id="question"></div>
+
+<p>✏️ 例：3/4 や -6/12（自動で約分されるよ）</p>
+
+<input type="text" id="answer" placeholder="答えを入力（分数OK）">
+
+<br><br>
+
+<button onclick="checkAnswer()">答え合わせ</button>
+<button onclick="nextProblem()">次の問題</button>
+
+<p id="message"></p>
+
+<hr>
+
+<div class="score">
+    <p>🏆 スコア: <span id="score">0</span></p>
+    <p>🔥 コンボ: <span id="combo">0</span></p>
+    <p>⭐ ベストコンボ: <span id="bestCombo">0</span></p>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+body {
+    font-family: sans-serif;
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+h1 {
+    color: #333;
+}
+
+button {
+    padding: 8px 16px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+input {
+    padding: 8px;
+    width: 200px;
+}
+
+.success {
+    color: green;
+    font-weight: bold;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+}
+
+.score {
+    margin-top: 20px;
+}
